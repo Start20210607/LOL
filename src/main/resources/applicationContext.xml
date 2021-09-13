@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context" xsi:schemaLocation="
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd"> <!-- bean definitions here -->
+
+
+        <!-- 引入外部配置文件 -->
+        <context:property-placeholder location="classpath:db.properties"></context:property-placeholder>
+
+        <!-- 使用数据源对象 -->
+        <bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource">
+            <property name="username" value="${db.username}"></property>
+            <property name="password" value="${db.password}"></property>
+            <property name="url" value="${db.url}"></property>
+            <property name="driverClassName" value="${db.driverClassName}"></property>
+        </bean>
+
+        <!-- JdbcTemplate对象 -->
+        <bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+            <property name="dataSource" ref="dataSource"></property>
+        </bean>
+
+    <!-- Dao层 -->
+    <bean id="userDao" class="com.tx.dao.impl.HeroDaoImpl">
+        <property name="jdbcTemplate" ref="jdbcTemplate"></property>
+    </bean>
+
+    <!-- Service层 -->
+    <bean id="userService" class="com.tx.service.impl.HeroServiceImpl">
+        <property name="userDao" ref="userDao"></property>
+    </bean>
+
+    <!-- Controller层 -->
+    <bean id="userController" class="com.tx.controller.HeroController">
+        <property name="userService" ref="userService"></property>
+    </bean>
+
+</beans>
